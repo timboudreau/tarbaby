@@ -26,11 +26,11 @@ cert_file="${certs_dir}/fullchain.pem"
 key_file="${certs_dir}/privkey.pem"
 
 command=/usr/sbin/daemon
-command_args="-P ${pidfile} -p ${cpidfile} -u ${the_user} -r -f -S ${tarbaby_command} -p 443 -a -l ${logdir} -c ${cert_file} -k ${key_file}"
+command_args="-P ${pidfile} -p ${cpidfile} -u ${the_user} -r -f -S ${tarbaby_command} serve -p 443 -a -l ${logdir} -c ${cert_file} -k ${key_file}"
 
 # The inbox dir can be set in the config file. We do not want that here,
 # so we override it with the value this script expects
-: "${tarbaby_env:="RUST_LOG=info"}"
+: "${tarbaby_env:="RUST_LOG=debug"}"
 
 start_precmd="${name}_prestart"
 
