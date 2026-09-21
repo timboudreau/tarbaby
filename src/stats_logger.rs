@@ -19,10 +19,8 @@ use crate::stats::STATS;
 use chrono::{DateTime, Local};
 use std::{
     sync::atomic::{
-        AtomicU64,
-        Ordering::{Acquire, Release},
-    },
-    time::{Duration, SystemTime},
+        AtomicU64, Ordering::{Acquire, Release, SeqCst},
+    }, time::{Duration, SystemTime},
 };
 
 /// A thing that updates a deadline for the next time it should log stats and logs them
@@ -87,5 +85,15 @@ impl StatsLogger {
     fn format_date(when: SystemTime) -> String {
         let loc = DateTime::<Local>::from(when);
         loc.to_rfc2822()
+    }
+}
+
+impl Drop for StatsLogger {
+    fn drop(&mut self) {
+        // ensure we emit stats on shutdown
+        let last = self.next_deadline.load(SeqCst) - self.interval.as_millis() as u64;
+        let now = SystemTime::now();
+        let period_start = SystemTime::UNIX_EPOCH + Duration::from_millis(last);
+        STATS.snapshot().log(period_start, now);
     }
 }
