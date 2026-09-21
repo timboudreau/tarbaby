@@ -67,7 +67,7 @@ impl<S: AsyncWrite + Unpin + AsyncReadExt> RequestHandler<S> {
 
         // We want enough to log the request for forensic purposes, no more.  We aren't actually
         // interested in what was requested.
-        let mut buffer = [0; 128];
+        let mut buffer = [0; 256];
         let n = self.socket.read(&mut buffer).await?;
         if n == 0 {
             // nothing to read; bail.
