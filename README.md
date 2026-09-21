@@ -1,7 +1,8 @@
 Tarbaby
 =======
 
-The slowloris attack in reverse, to waste the time and bandwidth vulnerability scanners.
+The slowloris attack in reverse, to waste the time and bandwidth of bots that scan your site
+for vulnerabilities.
 
 This is a simple command-line web server that ... will never finish answering an HTTP request :-)
 
@@ -107,7 +108,8 @@ to use the `fullchain.pem` for the certificate and the `privkey.pem` files from 
 Running in both HTTP and HTTPs modes is not supported, but the application is quite lightweight and running
 two instances on different ports is trivial.
 
-For a demo of https support, run the `demo.sh` script in the checkout root.
+For a demo of https support, run the `demo.sh` script in the checkout root. It requires that openssl be on the
+path so it can generate a self-signed cert.
 
 License
 -------
