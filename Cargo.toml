@@ -1,0 +1,38 @@
+[package]
+name = "tarbaby"
+version = "1.0.0"
+edition = "2024"
+description = "A web app that deliberately never finishes responding to a request"
+license = "GPL-2.0-only"
+repository = "https://github.com/timboudreau/tarbaby"
+
+[features]
+default = []
+# Optionally use the multithreaded runtime
+multithread = [ "tokio/rt-multi-thread" ]
+
+[dependencies]
+chrono = { version = "0.4.45", default-features = false, features = [ "alloc", "clock", "now" ] }
+clap = { version = "4.6.7", features = [ "derive" ] }
+rand = "0.10.3"
+rustls-pemfile = "2.2.0"
+rustls-pki-types = { version = "1.15.1", features = ["web", "std"] }
+tokio = { version = "1.53.1", default-features = false, features = ["net", "mio", "rt", "time", "io-std", "macros", "parking_lot", "io-util"] }
+tokio-rustls = { version = "0.26.5", default-features = false, features = [ "tls12", "aws_lc_rs" ] }
+tracing = { version = "0.1.44", default-features = false, features = [ "std" ] }
+tracing-appender = { version = "0.2.5", features = [ "parking_lot" ] }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "parking_lot", "json" ] }
+
+[build-dependencies]
+rand = "0.10.3"
+
+[profile.release]
+codegen-units = 1
+lto="fat"
+debug-assertions=false
+debug = false
+strip = "symbols"
+overflow-checks = false
+incremental = false
+opt-level = 3
+panic = "abort"
