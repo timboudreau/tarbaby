@@ -117,10 +117,14 @@ impl TarbabyServer {
                     Ok(tls_stream) => {
                         let handler = handlers.new_handler(tls_stream);
                         if let Err(e) = handler.handle_request(addr).await {
-                            tracing::error!("Failed to handle connection: {}", e);
+                            tracing::error!(
+                                address = addr.to_string(),
+                                "Failed to handle connection: {}", e);
                         }
                     }
-                    Err(e) => tracing::error!("TLS handshake error: {}", e),
+                    Err(e) => tracing::error!(
+                        address = addr.to_string(),
+                        "TLS handshake error: {}", e),
                 }
                 STATS.on_close();
             });

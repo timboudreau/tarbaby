@@ -1,0 +1,49 @@
+# PROVIDE: tarbaby
+# REQUIRE: NETWORKING
+# KEYWORD: shutdown
+#
+# Add the following line to /etc/rc.conf to enable bounce-agent
+#
+# tarbaby="YES"
+
+. /etc/rc.subr
+
+name="tarbaby"
+rcvar="tarbaby_enable"
+
+the_user="root"
+
+tarbaby_command="/opt/bin/tarbaby"
+
+piddir="/var/run/${name}"
+
+cpidfile="${piddir}/${name}.pid"
+pidfile="${piddir}/${name}d.pid"
+logdir="/var/log/tarbaby"
+
+certs_dir="/usr/local/etc/letsencrypt/live/l.mastfrog.com"
+cert_file="${certs_dir}/fullchain.pem"
+key_file="${certs_dir}/privkey.pem"
+
+command=/usr/sbin/daemon
+command_args="-P ${pidfile} -p ${cpidfile} -u ${the_user} -r -f -S ${tarbaby_command} -p 443 -a -l ${logdir} -c ${cert_file} -k ${key_file}"
+
+# The inbox dir can be set in the config file. We do not want that here,
+# so we override it with the value this script expects
+: "${tarbaby_env:="RUST_LOG=info"}"
+
+start_precmd="${name}_prestart"
+
+tarbaby_prestart()
+{
+    if [ ! -d "${piddir}" ]; then
+        install -g wheel -d -o ${the_user} /var/run/${name}
+    fi
+    chown -R "${the_user}" "${piddir}"
+    mkdir -p "${logdir}"
+    chgrp wheel "${logdir}"
+}
+
+load_rc_config $name
+
+run_rc_command "$1"
